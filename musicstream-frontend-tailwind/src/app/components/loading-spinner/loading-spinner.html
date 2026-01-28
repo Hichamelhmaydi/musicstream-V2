@@ -1,1 +1,9 @@
-<p>loading-spinner works!</p>
+<div class="flex flex-col items-center justify-center p-8 space-y-4" [class.h-64]="!fullScreen">
+      <div class="relative">
+        <div class="w-16 h-16 border-4 border-primary-200 rounded-full"></div>
+        <div class="absolute top-0 left-0 w-16 h-16 border-4 border-primary-600 rounded-full 
+                    animate-spin border-t-transparent"></div>
+      </div>
+      <p class="text-gray-600" *ngIf="message">{{ message }}</p>
+      <p class="text-sm text-gray-500" *ngIf="!message">Loading...</p>
+    </div>
