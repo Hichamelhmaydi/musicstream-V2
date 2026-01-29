@@ -1,1 +1,85 @@
-<p>search-bar works!</p>
+    <div class="bg-gradient-to-r from-white to-primary-50 rounded-2xl p-6 shadow-lg">
+      <div class="flex flex-col lg:flex-row gap-4">
+        
+        <div class="flex-1">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <input type="text"
+                   [(ngModel)]="filters.search"
+                   (ngModelChange)="onFiltersChange()"
+                   placeholder="Search tracks by title or artist..."
+                   class="input pl-10 pr-4 py-3 text-lg"
+                   aria-label="Search tracks">
+          </div>
+        </div>
+
+      
+        <div class="w-full lg:w-64">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-filter text-gray-400"></i>
+            </div>
+            <select [(ngModel)]="filters.category"
+                    (ngModelChange)="onFiltersChange()"
+                    class="input pl-10 pr-4 py-3 appearance-none">
+              <option value="">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <i class="fas fa-chevron-down text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+
+       
+        <div class="w-full lg:w-64">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-sort text-gray-400"></i>
+            </div>
+            <select [(ngModel)]="filters.sortBy"
+                    (ngModelChange)="onFiltersChange()"
+                    class="input pl-10 pr-4 py-3 appearance-none">
+              <option value="title">Title</option>
+              <option value="artist">Artist</option>
+              <option value="addedDate">Date Added</option>
+              <option value="duration">Duration</option>
+            </select>
+          </div>
+        </div>
+
+      
+        <div class="w-full lg:w-32">
+          <button (click)="toggleSortOrder()"
+                  class="w-full h-full flex items-center justify-center px-4 py-3 bg-white border border-gray-300 rounded-lg
+                         hover:bg-gray-50 transition-colors duration-200">
+            <span class="mr-2">
+              {{ filters.sortOrder === 'asc' ? 'A → Z' : 'Z → A' }}
+            </span>
+            <i class="fas" [class.fa-sort-alpha-up]="filters.sortOrder === 'asc'"
+                          [class.fa-sort-alpha-down]="filters.sortOrder === 'desc'"></i>
+          </button>
+        </div>
+      </div>
+
+     
+      <div class="mt-4 flex flex-wrap gap-2" *ngIf="hasActiveFilters()">
+        <span class="text-sm text-gray-600">Active filters:</span>
+        <button *ngIf="filters.search"
+                (click)="clearSearch()"
+                class="badge bg-primary-100 text-primary-800 hover:bg-primary-200 transition-colors">
+          Search: "{{ filters.search }}"
+          <i class="fas fa-times ml-2"></i>
+        </button>
+        <button *ngIf="filters.category"
+                (click)="clearCategory()"
+                class="badge bg-purple-100 text-purple-800 hover:bg-purple-200 transition-colors">
+          Category: {{ filters.category }}
+          <i class="fas fa-times ml-2"></i>
+        </button>
+      </div>
+    </div>
