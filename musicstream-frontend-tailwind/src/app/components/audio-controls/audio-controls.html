@@ -1,1 +1,92 @@
-<p>audio-controls works!</p>
+<div class="bg-gradient-to-r from-gray-900 to-black rounded-2xl p-6 text-white">
+  
+      <div class="mb-6">
+        <div class="flex justify-between text-sm text-gray-300 mb-2">
+          <span>{{ formatTime(currentTime) }}</span>
+          <span>{{ formatTime(duration) }}</span>
+        </div>
+        <div class="relative">
+          <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full"
+                 [style.width.%]="(currentTime / duration) * 100"></div>
+          </div>
+          <input type="range"
+                 [value]="currentTime"
+                 [max]="duration"
+                 (input)="onSeek($event)"
+                 class="absolute inset-0 w-full h-2 opacity-0 cursor-pointer" />
+        </div>
+      </div>
+
+      
+      <div class="flex items-center justify-between">
+  
+        <div class="flex items-center space-x-4">
+          <button (click)="skip.emit(-10)" 
+                  class="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+            <i class="fas fa-backward text-lg"></i>
+          </button>
+          
+          <button (click)="togglePlay.emit()" 
+                  class="p-4 rounded-full bg-gradient-to-r from-primary-600 to-purple-600 
+                         hover:from-primary-700 hover:to-purple-700 transition-all transform hover:scale-105">
+            <i class="fas" [class.fa-play]="!isPlaying" [class.fa-pause]="isPlaying" class="text-xl"></i>
+          </button>
+          
+          <button (click)="skip.emit(10)" 
+                  class="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+            <i class="fas fa-forward text-lg"></i>
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <button (click)="toggleMute.emit()" 
+                  class="p-2 rounded-full hover:bg-gray-800 transition-colors">
+            <i class="fas" [class.fa-volume-up]="!isMuted && volume > 0.5"
+                      [class.fa-volume-down]="!isMuted && volume <= 0.5"
+                      [class.fa-volume-mute]="isMuted" class="text-lg"></i>
+          </button>
+          
+          <div class="relative w-32">
+            <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full"
+                   [style.width.%]="volume * 100"></div>
+            </div>
+            <input type="range"
+                   [value]="volume * 100"
+                   (input)="onVolumeChange($event)"
+                   min="0"
+                   max="100"
+                   class="absolute inset-0 w-full h-1 opacity-0 cursor-pointer" />
+          </div>
+          
+          <span class="text-sm text-gray-300 w-12">{{ Math.round(volume * 100) }}%</span>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <span class="text-sm text-gray-300">Speed:</span>
+          <div class="flex bg-gray-800 rounded-lg overflow-hidden">
+            <button *ngFor="let rate of [0.5, 0.75, 1, 1.25, 1.5, 2]"
+                    (click)="playbackRateChange.emit(rate)"
+                    [class.bg-gradient-to-r]="playbackRate === rate"
+                    [class.from-primary-600]="playbackRate === rate"
+                    [class.to-purple-600]="playbackRate === rate"
+                    [class.text-white]="playbackRate === rate"
+                    [class.bg-gray-700]="playbackRate !== rate"
+                    class="px-3 py-1 text-sm hover:bg-gray-600 transition-colors">
+              {{ rate }}x
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="trackTitle" class="mt-6 pt-6 border-t border-gray-800">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-primary-600 to-purple-600 rounded-lg"></div>
+          <div>
+            <h4 class="font-semibold truncate">{{ trackTitle }}</h4>
+            <p class="text-sm text-gray-400">{{ trackArtist }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
