@@ -1,1 +1,181 @@
-<p>track-detail works!</p>
+ <div class="max-w-7xl mx-auto animate-fade-in">
+     
+      <nav class="mb-8">
+        <a routerLink="/" 
+           class="inline-flex items-center text-primary-600 hover:text-primary-800 transition-colors">
+          <i class="fas fa-arrow-left mr-2"></i>
+          Back to Library
+        </a>
+      </nav>
+
+
+      <app-loading-spinner *ngIf="loading" 
+                           message="Loading track details..."></app-loading-spinner>
+
+      
+      <div *ngIf="error && !loading" 
+           class="card bg-red-50 border border-red-200">
+        <div class="flex items-center">
+          <i class="fas fa-exclamation-circle text-red-500 text-2xl mr-4"></i>
+          <div>
+            <h3 class="font-bold text-red-800">Error Loading Track</h3>
+            <p class="text-red-600 mt-1">{{ error }}</p>
+            <a routerLink="/" class="mt-3 btn btn-secondary inline-block">
+              Return to Library
+            </a>
+          </div>
+        </div>
+      </div>
+
+  
+      <div *ngIf="track && !loading" class="space-y-8">
+       
+        <div class="bg-gradient-to-r from-primary-900 to-purple-900 rounded-2xl p-8 text-white">
+          <div class="flex flex-col lg:flex-row items-center gap-8">
+          
+            <div class="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl">
+              <img [src]="track.coverUrl || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=600&fit=crop'"
+                   [alt]="track.title"
+                   class="w-full h-full object-cover"
+                   (error)="onImageError($event)" />
+            </div>
+
+           
+            <div class="flex-1">
+              <div class="mb-4">
+                <span class="badge bg-white/20 text-white border-none">
+                  {{ track.category }}
+                </span>
+              </div>
+              
+              <h1 class="text-5xl font-bold mb-4">{{ track.title }}</h1>
+              <h2 class="text-3xl text-primary-200 mb-6">{{ track.artist }}</h2>
+              
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+                <div>
+                  <div class="text-sm text-primary-200">Duration</div>
+                  <div class="text-2xl font-bold">{{ formatDuration(track.duration) }}</div>
+                </div>
+                <div>
+                  <div class="text-sm text-primary-200">Added</div>
+                  <div class="text-2xl font-bold">{{ track.addedDate | date:'mediumDate' }}</div>
+                </div>
+                <div>
+                  <div class="text-sm text-primary-200">Status</div>
+                  <div class="text-2xl font-bold text-green-400">Available</div>
+                </div>
+                <div>
+                  <div class="text-sm text-primary-200">Quality</div>
+                  <div class="text-2xl font-bold">High</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+       
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+       
+          <div class="lg:col-span-2 space-y-8">
+            
+            <div class="card">
+              <h3 class="text-xl font-bold text-gray-800 mb-4">Description</h3>
+              <p class="text-gray-600 leading-relaxed">
+                {{ track.description || 'No description available for this track.' }}
+              </p>
+            </div>
+
+          
+            <div class="card">
+              <h3 class="text-xl font-bold text-gray-800 mb-6">Listen Now</h3>
+              <app-audio-controls 
+                [trackTitle]="track.title"
+                [trackArtist]="track.artist"
+                (togglePlay)="togglePlay()"
+                (skip)="skip($event)"
+                (seek)="seek($event)"
+                (volumeChange)="setVolume($event)"
+                (toggleMute)="toggleMute()"
+                (playbackRateChange)="setPlaybackRate($event)">
+              </app-audio-controls>
+            </div>
+          </div>
+
+          
+          <div class="space-y-8">
+          
+            <div class="card bg-gradient-to-br from-primary-50 to-primary-100">
+              <h3 class="text-lg font-bold text-primary-800 mb-4">Quick Actions</h3>
+              <div class="space-y-3">
+                <a [routerLink]="['/edit', track.id]" 
+                   class="flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                  <span class="text-gray-700">
+                    <i class="fas fa-edit text-primary-600 mr-2"></i>
+                    Edit Track
+                  </span>
+                  <i class="fas fa-chevron-right text-gray-400"></i>
+                </a>
+                
+                <button (click)="downloadTrack()"
+                        class="w-full flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                  <span class="text-gray-700">
+                    <i class="fas fa-download text-green-600 mr-2"></i>
+                    Download
+                  </span>
+                  <i class="fas fa-chevron-right text-gray-400"></i>
+                </button>
+                
+                <button (click)="shareTrack()"
+                        class="w-full flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition-all">
+                  <span class="text-gray-700">
+                    <i class="fas fa-share-alt text-blue-600 mr-2"></i>
+                    Share
+                  </span>
+                  <i class="fas fa-chevron-right text-gray-400"></i>
+                </button>
+              </div>
+            </div>
+
+            
+            <div class="card">
+              <h3 class="text-lg font-bold text-gray-800 mb-4">Technical Details</h3>
+              <div class="space-y-3">
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                  <span class="text-gray-600">Format</span>
+                  <span class="font-medium">MP3</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                  <span class="text-gray-600">Bitrate</span>
+                  <span class="font-medium">320 kbps</span>
+                </div>
+                <div class="flex justify-between py-2 border-b border-gray-100">
+                  <span class="text-gray-600">Sample Rate</span>
+                  <span class="font-medium">44.1 kHz</span>
+                </div>
+                <div class="flex justify-between py-2">
+                  <span class="text-gray-600">Channels</span>
+                  <span class="font-medium">Stereo</span>
+                </div>
+              </div>
+            </div>
+
+            
+            <div class="card">
+              <h3 class="text-lg font-bold text-gray-800 mb-4">Similar Tracks</h3>
+              <div class="space-y-3">
+                <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                  <div class="w-12 h-12 bg-gradient-to-br from-primary-200 to-primary-300 rounded-lg"></div>
+                  <div class="flex-1">
+                    <div class="font-medium text-gray-800">Similar Song</div>
+                    <div class="text-sm text-gray-600">Same Artist</div>
+                  </div>
+                  <button class="p-2 text-primary-600 hover:bg-primary-50 rounded-full">
+                    <i class="fas fa-play"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
