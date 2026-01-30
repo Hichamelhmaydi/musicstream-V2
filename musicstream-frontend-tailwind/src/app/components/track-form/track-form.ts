@@ -5,11 +5,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TrackService } from '../../services/track';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner';
 import { Track } from '../../models/track.model';
+import { DurationPipe } from '../../pipes/duration.pipe';
 
 @Component({
   selector: 'app-track-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, LoadingSpinnerComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, LoadingSpinnerComponent, DurationPipe],
   templateUrl: './track-form.html',
   styles: []
 })
