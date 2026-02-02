@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
 import { Track } from '../models/track.model';
 
@@ -16,8 +17,10 @@ export interface PlayerState {
   providedIn: 'root'
 })
 export class AudioPlayerService {
-  private audioElement: HTMLAudioElement;
-  
+
+  private audioElement?: HTMLAudioElement;
+  private isBrowser: boolean;
+
   private stateSubject = new BehaviorSubject<PlayerState>({
     track: null,
     isPlaying: false,
@@ -27,110 +30,111 @@ export class AudioPlayerService {
     isMuted: false,
     playbackRate: 1
   });
-  
+
   state$ = this.stateSubject.asObservable();
 
-  constructor() {
-    this.audioElement = new Audio();
-    this.setupAudioListeners();
+  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+
+    if (this.isBrowser) {
+      this.audioElement = new Audio();
+      this.setupAudioListeners();
+    }
   }
 
   private setupAudioListeners(): void {
+    if (!this.audioElement) return;
+
     this.audioElement.addEventListener('timeupdate', () => {
-      this.stateSubject.next({
-        ...this.stateSubject.value,
-        currentTime: this.audioElement.currentTime,
-        duration: this.audioElement.duration || 0
+      this.updateState({
+        currentTime: this.audioElement!.currentTime,
+        duration: this.audioElement!.duration || 0
       });
     });
 
     this.audioElement.addEventListener('ended', () => {
-      this.stateSubject.next({
-        ...this.stateSubject.value,
+      this.updateState({
         isPlaying: false,
         currentTime: 0
       });
     });
 
     this.audioElement.addEventListener('loadedmetadata', () => {
-      this.stateSubject.next({
-        ...this.stateSubject.value,
-        duration: this.audioElement.duration
+      this.updateState({
+        duration: this.audioElement!.duration
       });
     });
 
     this.audioElement.addEventListener('volumechange', () => {
-      this.stateSubject.next({
-        ...this.stateSubject.value,
-        volume: this.audioElement.volume,
-        isMuted: this.audioElement.muted
+      this.updateState({
+        volume: this.audioElement!.volume,
+        isMuted: this.audioElement!.muted
       });
     });
   }
 
   playTrack(track: Track): void {
+    if (!this.audioElement) return;
+
     if (this.audioElement.src !== track.audioUrl) {
       this.audioElement.src = track.audioUrl;
       this.audioElement.load();
     }
-    
+
     this.audioElement.play();
-    this.stateSubject.next({
-      ...this.stateSubject.value,
+    this.updateState({
       track,
       isPlaying: true
     });
   }
 
   pause(): void {
+    if (!this.audioElement) return;
+
     this.audioElement.pause();
-    this.stateSubject.next({
-      ...this.stateSubject.value,
-      isPlaying: false
-    });
+    this.updateState({ isPlaying: false });
   }
 
   resume(): void {
+    if (!this.audioElement) return;
+
     this.audioElement.play();
-    this.stateSubject.next({
-      ...this.stateSubject.value,
-      isPlaying: true
-    });
+    this.updateState({ isPlaying: true });
   }
 
   togglePlay(): void {
-    if (this.stateSubject.value.isPlaying) {
-      this.pause();
-    } else {
-      this.resume();
-    }
+    this.stateSubject.value.isPlaying ? this.pause() : this.resume();
   }
 
   seekTo(time: number): void {
+    if (!this.audioElement) return;
+
     this.audioElement.currentTime = time;
-    this.stateSubject.next({
-      ...this.stateSubject.value,
-      currentTime: time
-    });
+    this.updateState({ currentTime: time });
   }
 
   setVolume(volume: number): void {
+    if (!this.audioElement) return;
+
     this.audioElement.volume = Math.max(0, Math.min(1, volume));
   }
 
   toggleMute(): void {
+    if (!this.audioElement) return;
+
     this.audioElement.muted = !this.audioElement.muted;
   }
 
   setPlaybackRate(rate: number): void {
+    if (!this.audioElement) return;
+
     this.audioElement.playbackRate = rate;
-    this.stateSubject.next({
-      ...this.stateSubject.value,
-      playbackRate: rate
-    });
+    this.updateState({ playbackRate: rate });
   }
 
   skip(seconds: number): void {
+    if (!this.audioElement) return;
+
     const newTime = this.audioElement.currentTime + seconds;
     this.seekTo(Math.max(0, Math.min(newTime, this.audioElement.duration)));
   }
@@ -140,5 +144,12 @@ export class AudioPlayerService {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  private updateState(partial: Partial<PlayerState>) {
+    this.stateSubject.next({
+      ...this.stateSubject.value,
+      ...partial
+    });
   }
 }

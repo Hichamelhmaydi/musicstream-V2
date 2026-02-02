@@ -90,7 +90,8 @@
               "buildTarget": "musicstream-frontend-tailwind:build:production"
             },
             "development": {
-              "buildTarget": "musicstream-frontend-tailwind:build:development"
+              "buildTarget": "musicstream-frontend-tailwind:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
