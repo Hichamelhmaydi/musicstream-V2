@@ -1,4 +1,3 @@
-
 export interface Track {
   id?: number;
   title: string;
@@ -9,6 +8,16 @@ export interface Track {
   audioUrl: string;
   coverUrl?: string;
   addedDate?: Date;
+}
+
+export interface TrackUpload {
+  title: string;
+  artist: string;
+  description: string;
+  category: string;
+  duration: number;
+  audioFile?: File;
+  coverFile?: File;
 }
 
 export interface TrackFilters {

@@ -2,38 +2,17 @@
       
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Music Library</h1>
-          <p class="text-gray-600 mt-2">Browse and manage your music collection</p>
+          <h1 class="text-3xl font-bold text-white">Music Library</h1>
+          <p class="text-white mt-2">Browse and manage your music collection</p>
         </div>
         <a routerLink="/add" 
-           class="btn btn-primary px-6 py-3 text-lg inline-flex items-center justify-center">
-          <i class="fas fa-plus-circle mr-2"></i>
+           class="btn btn-primary px-6 py-3 text-lg inline-flex items-center justify-center text-white">
+          <i class="fas fa-plus-circle mr-2 text-white"></i>
           Add New Track
         </a>
       </div>
 
       <app-search-bar (filtersChange)="onFiltersChange($event)"></app-search-bar>
-
-      
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="card bg-gradient-to-br from-primary-50 to-primary-100 border-l-4 border-primary-500">
-          <div class="text-3xl font-bold text-primary-800">{{ totalTracks }}</div>
-          <div class="text-sm text-primary-600 mt-1">Total Tracks</div>
-        </div>
-        <div class="card bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-purple-500">
-          <div class="text-3xl font-bold text-purple-800">{{ categories.length }}</div>
-          <div class="text-sm text-purple-600 mt-1">Categories</div>
-        </div>
-        <div class="card bg-gradient-to-br from-green-50 to-green-100 border-l-4 border-green-500">
-          <div class="text-3xl font-bold text-green-800">{{ totalDuration | number:'1.0-0' }}</div>
-          <div class="text-sm text-green-600 mt-1">Total Minutes</div>
-        </div>
-        <div class="card bg-gradient-to-br from-orange-50 to-orange-100 border-l-4 border-orange-500">
-          <div class="text-3xl font-bold text-orange-800">{{ newTracks }}</div>
-          <div class="text-sm text-orange-600 mt-1">Added This Week</div>
-        </div>
-      </div>
-
       
       <app-loading-spinner *ngIf="loading" 
                            message="Loading your music library..."></app-loading-spinner>
@@ -57,10 +36,10 @@
 
       <div *ngIf="!loading && !error">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-gray-800">
+          <h2 class="text-2xl font-bold text-white">
             Tracks <span class="text-primary-600">({{ filteredTracks.length }})</span>
           </h2>
-          <div class="text-sm text-gray-600">
+          <div class="text-sm text-white">
             Sorted by {{ currentFilters.sortBy | titlecase }} 
             {{ currentFilters.sortOrder === 'asc' ? '(A → Z)' : '(Z → A)' }}
           </div>

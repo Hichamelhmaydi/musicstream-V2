@@ -1,3 +1,37 @@
 spring:
   application:
     name: musicstream
+  profiles:
+    active: dev
+server:
+  port: 8080
+  web:
+    cors:
+      allowed-origins:
+        - http://localhost:4200
+        - http://localhost:4201
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+      file-size-threshold: 2KB
+
+storage:
+  location: uploads
+
+logging:
+  level:
+    com.musicstream: DEBUG
+    org.springframework.web: DEBUG
+

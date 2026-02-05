@@ -5,15 +5,11 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class DurationPipe implements PipeTransform {
-
   transform(seconds: number): string {
-    if (!seconds || seconds <= 0) {
-      return '0:00';
-    }
-
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    if (isNaN(seconds) || seconds < 0) return '0:00';
+    
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 }

@@ -1,9 +1,8 @@
-
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'library',
     loadComponent: () => import('./components/library/library')
       .then(m => m.LibraryComponent),
     title: 'Music Library - MusicStream'
@@ -28,7 +27,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: 'library',
     pathMatch: 'full'
   }
 ];
